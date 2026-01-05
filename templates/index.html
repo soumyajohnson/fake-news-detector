@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fake News Detector</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #e5e7eb;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 24px;
+            background: #020617;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        h1 {
+            margin-top: 0;
+            color: #f97316;
+        }
+        textarea {
+            width: 100%;
+            min-height: 80px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            padding: 10px;
+            font-size: 14px;
+            background: #020617;
+            color: #e5e7eb;
+        }
+        button {
+            margin-top: 12px;
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            background: #f97316;
+            color: #111827;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #fb923c;
+        }
+        .card {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 10px;
+            background: #020617;
+            border: 1px solid #1f2937;
+        }
+        .label-real {
+            color: #22c55e;
+            font-weight: bold;
+        }
+        .label-fake {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        .section-title {
+            margin-top: 16px;
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: #e5e7eb;
+            border-bottom: 1px solid #1f2937;
+            padding-bottom: 4px;
+        }
+        .post {
+            margin-bottom: 10px;
+        }
+        .post a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .post a:hover {
+            text-decoration: underline;
+        }
+        .prob-row {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Fake News Detector + Social Context</h1>
+    <p>Enter a news headline or short article. The model will predict if it's FAKE or REAL, and if it looks REAL, it will fetch context from Twitter, Reddit, and Google News.</p>
+
+    <form method="POST">
+        <label for="headline">Headline / Article:</label><br>
+        <textarea id="headline" name="headline" placeholder="Paste your news here..." required>{{ result.headline if result else "" }}</textarea>
+        <br>
+        <button type="submit">Analyze</button>
+    </form>
+
+    {% if result %}
+        <div class="card">
+            <h2>Prediction</h2>
+            <p>
+                Prediction:
+                {% if result.label == "REAL" %}
+                    <span class="label-real">{{ result.label }}</span>
+                {% else %}
+                    <span class="label-fake">{{ result.label }}</span>
+                {% endif %}
+            </p>
+            <p>Confidence: {{ result.confidence }}%</p>
+            <p class="prob-row">
+                Class probabilities → FAKE: {{ result.probs.fake }}% | REAL: {{ result.probs.real }}%
+            </p>
+
+            {% if result.label == "FAKE" %}
+                <p style="margin-top:12px;color:#f97316;">
+                    ⚠ No external context fetched because the model predicts this as FAKE.
+                </p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if result and result.label == "REAL" %}
+        <div class="card">
+            <h2>Social / Web Context</h2>
+            {% if context.search_term %}
+                <p><strong>Search term used:</strong> {{ context.search_term }}</p>
+            {% endif %}
+
+            <div class="section-title">Twitter</div>
+            {% if context.twitter %}
+                {% for post in context.twitter %}
+                    <div class="post">
+                        <div>{{ post.text }}</div>
+                        {% if post.url %}
+                            <a href="{{ post.url }}" target="_blank">View source</a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No relevant tweets found.</p>
+            {% endif %}
+
+            <div class="section-title">Reddit</div>
+            {% if context.reddit %}
+                {% for post in context.reddit %}
+                    <div class="post">
+                        <div>{{ post.text }}</div>
+                        {% if post.url %}
+                            <a href="{{ post.url }}" target="_blank">View thread</a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No relevant Reddit posts found.</p>
+            {% endif %}
+
+            <div class="section-title">Google News</div>
+            {% if context.google %}
+                {% for post in context.google %}
+                    <div class="post">
+                        <div>{{ post.text }}</div>
+                        {% if post.url %}
+                            <a href="{{ post.url }}" target="_blank">Read article</a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No related news articles found.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+</body>
+</html>
