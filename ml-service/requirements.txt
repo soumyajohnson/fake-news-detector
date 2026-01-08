@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+torch
+transformers
+pydantic
+feedparser
+praw
+python-dotenv
+keybert

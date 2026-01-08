@@ -10,7 +10,8 @@ kw_model = KeyBERT()
 def build_search_term(text: str) -> str:
     words = text.split()
     if len(words) <= 12:
-        return text
+        return text 
+    
 
     keywords = kw_model.extract_keywords(
         text,

@@ -45,3 +45,19 @@ data/
 # =========================
 .vscode/
 .DS_Store
+
+# =========================
+# Java / Maven
+# =========================
+target/
+*.class
+*.jar
+*.war
+.mvn/
+mvnw
+mvnw.cmd
+
+# =========================
+# New Python Environments
+# =========================
+ml-service/venv/
