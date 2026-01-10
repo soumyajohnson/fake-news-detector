@@ -1,0 +1,87 @@
+@use '../../../../styles/tokens' as *;
+
+:host {
+  display: block;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+}
+
+.navbar {
+  // Removed sticky from here, handled by :host
+  height: $header-height;
+  background-color: #ffffff00 !important;
+  color: $color-text !important;
+  padding: 0 !important; // MatToolbar padding reset
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  max-width: $container-max-width;
+  margin: 0 auto; // Center content
+  padding: 0 $spacing-md !important;
+  box-sizing: border-box;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+  text-decoration: none; // Ensure routerLink doesn't underline
+  
+  .brand-icon {
+    color: $color-primary;
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .brand-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: $color-text;
+    text-decoration: none;
+  }
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.nav-links {
+  display: flex;
+  gap: $spacing-sm;
+  margin-right: $spacing-md;
+
+  a {
+    font-weight: 500;
+    color: $color-text-muted;
+    text-decoration: none;
+    
+    &.active-link {
+      color: $color-primary;
+      background-color: rgba($color-primary, 0.05);
+    }
+  }
+}
+
+.auth-actions {
+  display: flex;
+  align-items: center;
+}
+
+// Mobile Adjustments
+@media (max-width: 600px) {
+  .brand-name {
+    display: none;
+  }
+  
+  .nav-links {
+    gap: 0;
+  }
+}

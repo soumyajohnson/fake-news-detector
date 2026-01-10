@@ -1,0 +1,94 @@
+@use '../../../styles/tokens' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: $spacing-md;
+  box-sizing: border-box;
+  background-color: $color-bg;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 440px;
+  padding: 0;
+}
+
+.login-card {
+  padding: $spacing-xxl $spacing-xl;
+  margin-bottom: 0;
+
+  @media (max-width: 480px) {
+    padding: $spacing-xl $spacing-md;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+}
+
+.section-title {
+  font-size: 1.875rem;
+  margin-bottom: $spacing-xs;
+  letter-spacing: -0.025em;
+}
+
+.muted {
+  margin-bottom: $spacing-lg;
+}
+
+.form-field-wrapper {
+  margin-bottom: $spacing-sm;
+}
+
+.login-btn {
+  height: 52px;
+  font-size: $font-size-base;
+  font-weight: 600;
+  margin-top: $spacing-md;
+  width: 100%;
+  border-radius: $border-radius-sm;
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+}
+
+.login-error {
+  background-color: $color-fake-bg;
+  color: $color-fake-text;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $border-radius-sm;
+  font-size: $font-size-sm;
+  text-align: center;
+  border: 1px solid rgba($color-fake, 0.2);
+}
+
+.register-link {
+  color: $color-primary;
+  text-decoration: none;
+  font-weight: 600;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Ensure the spinner matches the button text color (white for primary flat button)
+.spinner {
+  ::ng-deep circle {
+    stroke: currentColor !important;
+  }
+}
+
+// Material override for this component
+::ng-deep {
+  .login-card .mat-mdc-form-field-subscript-wrapper {
+    font-size: 0.75rem;
+  }
+}

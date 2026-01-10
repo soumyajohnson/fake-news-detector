@@ -1,0 +1,92 @@
+<div class="page">
+  
+  <div class="container">
+    <app-navbar></app-navbar>
+    <!-- Back Link -->
+    <a routerLink="/history" class="back-link">
+      <mat-icon inline>arrow_back</mat-icon> Back to History
+    </a>
+    
+    <div *ngIf="prediction" class="report-card card" [ngClass]="isFake ? 'fake-accent' : 'real-accent'">
+      
+      <!-- Header Row -->
+      <div class="report-header">
+        <div class="header-main">
+          <span class="status-pill" [ngClass]="isFake ? 'fake' : 'real'">
+            {{ prediction?.output?.label | uppercase }}
+          </span>
+          <span class="report-date muted">
+            {{ prediction?.createdAt | date:'medium' }}
+          </span>
+        </div>
+        
+        <div class="header-confidence">
+          <span class="confidence-label">Confidence</span>
+          <div class="confidence-display">
+            <span class="confidence-val">{{ confidencePercentage | number:'1.0-0' }}%</span>
+            <mat-progress-bar 
+              mode="determinate" 
+              [value]="confidencePercentage" 
+              [color]="isFake ? 'warn' : 'primary'"
+              class="mini-bar">
+            </mat-progress-bar>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 1: Analyzed Text -->
+      <div class="report-section analyzed-text-section">
+        <h3 class="section-label">Analyzed Text</h3>
+        <div class="text-box">
+          <p>{{ prediction?.request?.inputText }}</p>
+          <div class="source-info muted" *ngIf="prediction?.request?.url || prediction?.request?.sourcePlatform">
+            <span *ngIf="prediction?.request?.sourcePlatform">Source: {{ prediction?.request?.sourcePlatform }}</span>
+            <span *ngIf="prediction?.request?.url">URL: <a [href]="prediction?.request?.url" target="_blank">{{ prediction?.request?.url }}</a></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Explanation -->
+      <div class="report-section explanation-section">
+        <h3 class="section-label">Explanation</h3>
+        <p class="explanation-text">{{ prediction?.explanation?.summary }}</p>
+        <!-- <p class="method-text muted">Method used: {{ prediction?.explanation?.method }}</p> -->
+      </div>
+      
+      <!-- Section 3: Key Indicators -->
+      <div class="report-section indicators-section" *ngIf="prediction?.explanation?.highlights?.length">
+        <h3 class="section-label">Key Indicators</h3>
+        <mat-chip-set>
+          <mat-chip *ngFor="let h of prediction!.explanation.highlights" class="indicator-chip">
+            {{ h.span }}
+          </mat-chip>
+        </mat-chip-set>
+      </div>
+
+      <!-- Section 4: Social Context -->
+      <div class="report-section social-section" *ngIf="prediction?.socialContext?.length">
+        <h3 class="section-label">Social Context</h3>
+        <div class="social-grid">
+          <div class="social-item" *ngFor="let post of prediction!.socialContext">
+            <div class="social-icon">
+              <mat-icon>public</mat-icon>
+            </div>
+            <div class="social-content">
+              <div class="social-source">{{ post.source }}</div>
+              <div class="social-snippet">{{ post.text }}</div>
+              <div class="social-meta muted" *ngIf="post.published">{{ post.published }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Footer Actions -->
+      <div class="report-footer">
+        <button mat-flat-button color="warn" (click)="delete()">
+          <mat-icon>delete</mat-icon> Delete Record
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

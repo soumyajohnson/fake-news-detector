@@ -1,0 +1,161 @@
+<div class="page">
+  <div class="container">
+    <app-navbar></app-navbar>
+    <!-- Header & Controls -->
+    <div class="header-section">
+      <div class="title-row">
+        <h1 class="section-title">History</h1>
+        <div class="search-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input [formControl]="searchControl" placeholder="Search by text or URL..." class="search-input">
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <mat-chip-listbox [formControl]="statusFilterControl">
+          <mat-chip-option value="All" selected>All</mat-chip-option>
+          <mat-chip-option value="REAL" color="accent">Real</mat-chip-option>
+          <mat-chip-option value="FAKE" color="warn">Fake</mat-chip-option>
+        </mat-chip-listbox>
+
+        <mat-form-field appearance="outline" class="sort-select">
+          <mat-label>Sort by</mat-label>
+          <mat-select [formControl]="sortControl">
+            <mat-option value="newest">Newest first</mat-option>
+            <mat-option value="oldest">Oldest first</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="card content-card">
+      <ng-container *ngIf="history$ | async as history; else loading">
+        
+        <!-- Empty State -->
+        <div *ngIf="history.length === 0" class="empty-state">
+          <div class="empty-content">
+            <mat-icon class="empty-icon">history</mat-icon>
+            <h3>No checks yet</h3>
+            <p class="muted">Your analysis history will appear here once you check some news.</p>
+            <button mat-flat-button color="primary" routerLink="/check">Check News Now</button>
+          </div>
+        </div>
+
+        <!-- Table View (Desktop) -->
+        <div class="table-container" [class.hidden]="history.length === 0">
+          <table mat-table [dataSource]="dataSource" class="history-table">
+            
+            <!-- Date Column -->
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef> Date </th>
+              <td mat-cell *matCellDef="let element" class="date-cell">
+                <span class="date-text">{{element.createdAt | date:'mediumDate'}}</span>
+                <span class="time-text muted">{{element.createdAt | date:'shortTime'}}</span>
+              </td>
+            </ng-container>
+
+            <!-- Text Preview Column -->
+            <ng-container matColumnDef="text">
+              <th mat-header-cell *matHeaderCellDef> Article Snippet </th>
+              <td mat-cell *matCellDef="let element" class="text-cell">
+                <div class="text-preview">{{ element.request.inputText }}</div>
+                <div class="url-preview muted" *ngIf="element.request.url">{{ element.request.url }}</div>
+              </td>
+            </ng-container>
+
+            <!-- Label Column -->
+            <ng-container matColumnDef="label">
+              <th mat-header-cell *matHeaderCellDef> Result </th>
+              <td mat-cell *matCellDef="let element">
+                <span class="status-pill" [ngClass]="element?.output?.label?.toLowerCase() === 'fake' ? 'fake' : 'real'">
+                  {{element?.output?.label}}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Confidence Column -->
+            <ng-container matColumnDef="confidence">
+              <th mat-header-cell *matHeaderCellDef> Confidence </th>
+              <td mat-cell *matCellDef="let element" class="confidence-cell">
+                <div class="confidence-wrapper">
+                  <span class="confidence-val">{{element.output.confidence | percent:'1.0-0'}}</span>
+                  <mat-progress-bar 
+                    mode="determinate" 
+                    [value]="element.output.confidence * 100"
+                    [color]="getConfidenceColor(element.output.label)"
+                    class="mini-bar">
+                  </mat-progress-bar>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef> </th>
+              <td mat-cell *matCellDef="let element" class="actions-cell">
+                <button mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item [routerLink]="['/history', element.id]">
+                    <mat-icon>visibility</mat-icon>
+                    <span>View Details</span>
+                  </button>
+                  <button mat-menu-item (click)="delete(element.id, $event)">
+                    <mat-icon color="warn">delete</mat-icon>
+                    <span class="warn-text">Delete</span>
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                class="clickable-row" 
+                [routerLink]="['/history', row.id]">
+            </tr>
+          </table>
+
+          <mat-paginator 
+              [pageSizeOptions]="[5, 10, 25]" 
+              [pageSize]="10"
+              showFirstLastButtons
+              aria-label="Select page of history">
+          </mat-paginator>
+        </div>
+
+        <!-- Mobile Card View (Pagination not applied here for simplicity, or we can slice history) -->
+        <!-- Note: MatPaginator primarily works with MatTableDataSource. For mobile list, 
+             we would need to manually slice 'history' based on paginator pageIndex/pageSize 
+             if we want strictly same behavior. For now, showing full list on mobile or 
+             we could hide paginator on mobile. -->
+        <div class="mobile-list" *ngIf="history.length > 0">
+          <div class="mobile-card" *ngFor="let item of history" [routerLink]="['/history', item.id]">
+            <div class="mobile-header">
+              <span class="status-pill small" [ngClass]="item?.output?.label?.toLowerCase() === 'fake' ? 'fake' : 'real'">
+                {{item?.output?.label}}
+              </span>
+              <span class="date-text muted">{{item.createdAt | date:'shortDate'}}</span>
+            </div>
+            
+            <p class="mobile-text">{{ item.request.inputText }}</p>
+            
+            <div class="mobile-footer">
+              <span class="confidence-text">
+                {{ item.output.confidence | percent:'1.0-0' }} Confidence
+              </span>
+              <button mat-icon-button color="warn" (click)="delete(item.id, $event)">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </ng-container>
+      
+      <ng-template #loading>
+        <div class="loading-state">Loading history...</div>
+      </ng-template>
+    </div>
+  </div>
+</div>

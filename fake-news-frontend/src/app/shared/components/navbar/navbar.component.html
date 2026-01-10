@@ -1,0 +1,33 @@
+<mat-toolbar color="primary" class="navbar">
+  <div class="container navbar-container">
+    <div class="brand" routerLink="/">
+      <mat-icon class="brand-icon">verified_user</mat-icon>
+      <span class="brand-name">Fake News Detector</span>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="nav-links" *ngIf="isLoggedIn">
+      <a mat-button routerLink="/check" routerLinkActive="active-link">Check</a>
+      <a mat-button routerLink="/history" routerLinkActive="active-link">History</a>
+    </div>
+
+    <div class="auth-actions">
+      <ng-container *ngIf="isLoggedIn; else loginBtn">
+        <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="User menu">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu" xPosition="before">
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+      </ng-container>
+
+      <ng-template #loginBtn>
+        <a mat-button routerLink="/auth/login" routerLinkActive="active-link" *ngIf="!isLoggedIn">Login</a>
+      </ng-template>
+    </div>
+  </div>
+</mat-toolbar>

@@ -1,0 +1,52 @@
+<div class="page">
+  <div class="container login-container">
+    <div class="card login-card">
+      <div class="text-center mb-4">
+        <h1 class="section-title">Welcome back</h1>
+        <p class="muted">Sign in to check news credibility and view your history.</p>
+      </div>
+      
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-field-wrapper">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" type="email" placeholder="name@company.com">
+            <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+              Email is required
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+              Please enter a valid email address
+            </mat-error>
+          </mat-form-field>
+        </div>
+        
+        <div class="form-field-wrapper">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword" type="button">
+              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+              Password is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div *ngIf="error" class="login-error mb-4">{{ error }}</div>
+        
+        <button mat-flat-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading" class="full-width login-btn">
+          <div class="btn-content">
+            <mat-spinner *ngIf="isLoading" diameter="20" class="spinner"></mat-spinner>
+            <span>{{ isLoading ? 'Signing in...' : 'Sign In' }}</span>
+          </div>
+        </button>
+      </form>
+
+      <div class="mt-4 text-center">
+        <span class="muted">Don't have an account? </span>
+        <a routerLink="/auth/register" class="register-link">Register</a>
+      </div>
+    </div>
+  </div>
+</div>

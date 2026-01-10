@@ -1,0 +1,108 @@
+@use 'styles/tokens' as *;
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+// Global Reset & Base
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: $color-bg;
+  color: $color-text;
+  font-family: $font-family-base;
+  -webkit-font-smoothing: antialiased;
+}
+
+// Layout Wrapper
+.page {
+  min-height: 100vh;
+  padding-top: $spacing-xl; // Consistent top spacing
+  padding-bottom: $spacing-xl;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  max-width: $container-max-width;
+  padding: 0 $spacing-lg;
+  box-sizing: border-box;
+
+  @media (max-width: 600px) {
+    padding: 0 $spacing-md;
+  }
+}
+
+// Component Classes
+.card {
+  background: $color-card-bg;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  padding: $spacing-lg;
+  border: 1px solid $color-border;
+  margin-bottom: $spacing-lg;
+  
+  // Reset Material Card overrides if needed, 
+  // but usually we wrap mat-card content or just use .card class on a div
+  &.mat-mdc-card {
+    padding: 0; // Material cards handle their own padding in content
+    
+    .mat-mdc-card-header {
+      padding: $spacing-lg $spacing-lg 0;
+    }
+    
+    .mat-mdc-card-content {
+      padding: $spacing-lg;
+    }
+    
+    .mat-mdc-card-actions {
+      padding: $spacing-sm $spacing-lg $spacing-lg;
+    }
+  }
+}
+
+.section-title {
+  font-size: $font-size-xl;
+  font-weight: 500;
+  margin-bottom: $spacing-lg;
+  color: $color-text;
+}
+
+.muted {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+}
+
+// Status Styles
+.status-real {
+  background-color: $color-real-bg;
+  color: $color-real-text;
+  border: 1px solid $color-real;
+}
+
+.status-fake {
+  background-color: $color-fake-bg;
+  color: $color-fake-text;
+  border: 1px solid $color-fake;
+}
+
+// Utility
+.full-width {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mb-4 { margin-bottom: $spacing-lg; }
+.mt-4 { margin-top: $spacing-lg; }
+
+// Angular Material Overrides for consistency
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+button.mat-mdc-button-base {
+  border-radius: $border-radius-sm !important;
+}

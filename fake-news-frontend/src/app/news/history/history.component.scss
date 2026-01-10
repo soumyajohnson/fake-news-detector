@@ -1,0 +1,285 @@
+@use '../../../styles/tokens' as *;
+
+.page {
+  padding: $spacing-lg;
+  min-height: 100vh;
+  background-color: $color-bg;
+}
+
+// Header & Controls
+.header-section {
+  margin-bottom: $spacing-lg;
+}
+
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.search-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+  min-width: 280px;
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $color-text-muted;
+  }
+
+  .search-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px 0 44px;
+    border: 1px solid $color-border;
+    border-radius: 24px;
+    background: $color-card-bg;
+    font-size: $font-size-base;
+    outline: none;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.1);
+    }
+  }
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  flex-wrap: wrap;
+
+  .sort-select {
+    width: 160px;
+    // Material override for density
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none; 
+    }
+  }
+}
+
+// Content Card
+.content-card {
+  padding: 0; // Let table touch edges
+  overflow: hidden;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+// Table Styles
+.table-container {
+  overflow-x: auto;
+  
+  &.hidden {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    display: none; // Hide table on mobile
+  }
+}
+
+.history-table {
+  width: 100%;
+
+  th.mat-mdc-header-cell {
+    background-color: #f9fafb;
+    color: $color-text-muted;
+    font-weight: 600;
+    font-size: $font-size-sm;
+    padding: $spacing-md;
+  }
+
+  td.mat-mdc-cell {
+    padding: $spacing-md;
+    border-bottom-color: $color-border;
+  }
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f9fafb;
+  }
+}
+
+// Column Specifics
+.date-cell {
+  white-space: nowrap;
+  
+  .date-text { display: block; font-weight: 500; }
+  .time-text { font-size: $font-size-sm; }
+}
+
+.text-cell {
+  max-width: 300px;
+  
+  .text-preview {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+  }
+  
+  .url-preview {
+    font-size: $font-size-sm;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.confidence-cell {
+  width: 140px;
+  
+  .confidence-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .mini-bar {
+    height: 4px;
+    border-radius: 2px;
+  }
+}
+
+.actions-cell {
+  width: 60px;
+  text-align: right;
+}
+
+// Status Pills
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+
+  &.real {
+    background-color: $color-real-bg;
+    color: $color-real-text;
+  }
+
+  &.fake {
+    background-color: $color-fake-bg;
+    color: $color-fake-text;
+  }
+  
+  &.small {
+    padding: 2px 8px;
+    font-size: 0.75rem;
+  }
+}
+
+// Mobile List View
+.mobile-list {
+  display: none; // Hidden on desktop
+  padding: $spacing-md;
+  
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+}
+
+.mobile-card {
+  background: $color-card-bg;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+  padding: $spacing-md;
+  cursor: pointer;
+  
+  &:active {
+    background-color: #f9fafb;
+  }
+
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-sm;
+  }
+
+  .mobile-text {
+    margin: 0 0 $spacing-md 0;
+    font-size: $font-size-base;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .mobile-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid $color-border;
+    padding-top: $spacing-sm;
+    
+    .confidence-text {
+      font-size: $font-size-sm;
+      font-weight: 500;
+      color: $color-text-muted;
+    }
+  }
+}
+
+// Empty State
+.empty-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xxl;
+  text-align: center;
+  
+  .empty-content {
+    max-width: 300px;
+  }
+
+  .empty-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: $spacing-lg;
+    color: $color-border;
+  }
+}
+
+.loading-state {
+  padding: $spacing-xxl;
+  text-align: center;
+  color: $color-text-muted;
+}
+
+.warn-text {
+  color: $color-fake;
+}
+
+// Paginator Override
+mat-paginator {
+  background: transparent;
+  border-top: 1px solid $color-border;
+}
