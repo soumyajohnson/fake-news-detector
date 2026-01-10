@@ -61,3 +61,4 @@ mvnw.cmd
 # New Python Environments
 # =========================
 ml-service/venv/
+model/bert_fakenews/model.safetensors
