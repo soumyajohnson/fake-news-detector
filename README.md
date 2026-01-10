@@ -126,13 +126,6 @@ python app/main.py
 -   **Browser Extension:** A lightweight extension to check news directly on social media feeds.
 -   **Monitoring:** Prometheus/Grafana integration for API latency and model drift monitoring.
 
-## Screenshots
-
-*(Placeholders for UI Screenshots: Dashboard, Analysis Result, History View)*
-
-![Dashboard Placeholder](#)
-![Analysis Report Placeholder](#)
-
 ## Author & Purpose
 
 This project demonstrates the design and implementation of a production-ready, full-stack machine learning application. It highlights skills in system architecture, microservices integration, and secure web development standards suitable for enterprise environments.
