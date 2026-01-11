@@ -15,7 +15,7 @@
               <mat-error *ngIf="checkForm.get('text')?.hasError('required')">News text is required</mat-error>
             </mat-form-field>
             
-            <div class="form-row">
+            <!-- <div class="form-row">
               <mat-form-field appearance="outline" class="half-width">
                 <mat-label>Source Platform (Optional)</mat-label>
                 <input matInput formControlName="sourcePlatform" placeholder="e.g. Twitter, Reddit">
@@ -25,7 +25,7 @@
                 <mat-label>URL (Optional)</mat-label>
                 <input matInput formControlName="url" placeholder="https://example.com/article">
               </mat-form-field>
-            </div>
+            </div> -->
 
             <div class="action-row">
               <button mat-flat-button color="primary" type="submit" [disabled]="checkForm.invalid || loading" class="action-btn">

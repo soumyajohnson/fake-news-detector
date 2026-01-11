@@ -6,44 +6,25 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from keybert import KeyBERT
 
+# Import from our new model loader
+from app.model_loader import predict_news, get_tokenizer
+
 app = FastAPI()
 
-# --- Path Magic to import from root ---
-# We need to import 'model.predict' which is at the project root level (relative to this service).
-# But 'model.predict' assumes CWD is project root to load "model/bert_fakenews".
-# So we temporarily switch CWD to project root for the import.
-
+# --- Path Magic for Scrapers ---
+# We still need scrapers from the root project.
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, "../../"))
 sys.path.append(project_root)
 
-original_cwd = os.getcwd()
+# Import scrapers
 try:
-    os.chdir(project_root)
-    # Check if model/predict.py exists or if it's just predict.py
-    if os.path.exists(os.path.join(project_root, "model", "predict.py")):
-        from model.predict import predict_news, tokenizer
-    elif os.path.exists(os.path.join(project_root, "predict.py")):
-        from predict import predict_news, tokenizer
-    else:
-        # Fallback for robustness, though we expect it in model/predict.py based on checks
-        raise ImportError("Could not find predict.py in model/ or root")
-
-    # Import scrapers
     from scrapers.google_news_scraper import fetch_google_news
     from scrapers.reddit_scraper import fetch_reddit_posts
-
 except ImportError as e:
-    # If dependencies are missing in the env, this will fail.
-    print(f"Error importing model or scrapers: {e}")
-    # Define dummy placeholders so app can at least start (though endpoint will fail)
-    def predict_news(text): raise NotImplementedError("Model not loaded")
+    print(f"Error importing scrapers: {e}")
     def fetch_google_news(query, max_results=5): return []
     def fetch_reddit_posts(query, limit=5): return []
-    tokenizer = None
-finally:
-    # Restore CWD so we don't confuse other things if needed
-    os.chdir(original_cwd)
 
 # --- Init KeyBERT ---
 try:
@@ -107,13 +88,20 @@ def predict_explain_endpoint(request: PredictRequest):
     
     # 1. Get Prediction
     try:
+        # This will trigger download/load on first request
         label, confidence, probs = predict_news(text)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Model prediction failed: {str(e)}")
+        print(f"Prediction failed: {e}")
+        # If the model fails to load/download, return 503 as requested
+        raise HTTPException(status_code=503, detail="Model unavailable or failed to load.")
 
     # 2. Generate Explanation (MVP Heuristic)
-    # "Pick top 8 tokens by a simple heuristic (e.g., longer alphabetic tokens, excluding stopwords/punctuation)."
-    
+    tokenizer = None
+    try:
+        tokenizer = get_tokenizer()
+    except:
+        pass # Should be loaded if predict_news succeeded
+
     if tokenizer:
         tokens = tokenizer.tokenize(text)
     else:
@@ -132,8 +120,6 @@ def predict_explain_endpoint(request: PredictRequest):
             candidates.append(clean_t)
             seen.add(clean_t.lower())
     
-    # Sort by length (heuristic: longer words are more specific?) or just take first 8?
-    # "Pick top 8 tokens by a simple heuristic" -> Let's sort by length descending.
     candidates.sort(key=len, reverse=True)
     top_tokens = candidates[:8]
     

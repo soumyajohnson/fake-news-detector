@@ -7,3 +7,5 @@ feedparser
 praw
 python-dotenv
 keybert
+huggingface_hub
+safetensors
