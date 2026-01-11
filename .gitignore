@@ -53,9 +53,7 @@ target/
 *.class
 *.jar
 *.war
-.mvn/
-mvnw
-mvnw.cmd
+
 
 # =========================
 # New Python Environments
