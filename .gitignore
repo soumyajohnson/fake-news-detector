@@ -60,3 +60,11 @@ target/
 # =========================
 ml-service/venv/
 model/bert_fakenews/model.safetensors
+
+# -----------------------------
+# Hugging Face / model caches
+# -----------------------------
+hf_cache/
+.huggingface/
+**/.cache/huggingface/
+**/huggingface_cache/

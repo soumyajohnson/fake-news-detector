@@ -1,0 +1,30 @@
+# Ignore git and IDE files
+.git
+.vscode
+.idea
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore large data and model outputs
+data/
+model_output/
+model/fake_news_model.pkl
+model/vectorizer.pkl
+*.pkl
+*.bin
+*.pth
+*.safetensors
+*.h5
+
+# Ignore virtual environments and dependencies
+venv/
+env/
+.env
+node_modules/
+.angular/
+
+# Ignore backend builds
+java-backend/target/
+fake-news-frontend/dist/
